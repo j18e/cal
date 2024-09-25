@@ -50,11 +50,9 @@ func run() error {
 	}
 
 	termWidth, _, _ := term.GetSize(int(os.Stdin.Fd()))
-	columns := 3
-	if termWidth < (monthWidth+2)*2 {
-		columns = 1
-	} else if termWidth < (monthWidth+2)*3 {
-		columns = 2
+	columns := termWidth / (monthWidth + monthMargin)
+	if columns > 6 {
+		columns = 6
 	}
 
 	fmt.Println(renderYear(year, columns))
@@ -69,6 +67,9 @@ func renderYear(year int, columns int) string {
 	for mn := 1; mn <= 12; {
 		var row []string
 		for col := 0; col < columns; col++ {
+			if mn > 12 {
+				break
+			}
 			month := time.Month(mn)
 			row = append(row, renderMonth(year, mn, month.String()))
 			mn++
